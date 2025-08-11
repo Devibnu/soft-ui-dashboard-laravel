@@ -17,24 +17,30 @@
                   <p class="mb-0">Password <b>secret</b></p>
                 </div>
                 <div class="card-body">
-                  <form role="form" method="POST" action="/session">
+                  <form role="form" method="POST" action="{{ route('login') }}">
                     @csrf
+@if ($errors->any())
+<div class="alert alert-danger text-light" role="alert">
+  <ul class="mb-0">
+    @foreach ($errors->all() as $error)
+      <li>{{ $error }}</li>
+    @endforeach
+  </ul>
+</div>
+@endif
                     <label>Email</label>
                     <div class="mb-3">
-                      <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="admin@softui.com" aria-label="Email" aria-describedby="email-addon">
-                      @error('email')
-                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
-                      @enderror
+                      <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="admin@softui.com" aria-label="Email" aria-describedby="email-addon" autocomplete="email">
                     </div>
                     <label>Password</label>
                     <div class="mb-3">
-                      <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="secret" aria-label="Password" aria-describedby="password-addon">
-                      @error('password')
-                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
-                      @enderror
+                      <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="secret" aria-label="Password" aria-describedby="password-addon" autocomplete="current-password">
                     </div>
+                    @error('email')
+                        <div class="alert alert-danger text-light">{{ $message }}</div>
+                    @enderror
                     <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="rememberMe" checked="">
+                      <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" checked>
                       <label class="form-check-label" for="rememberMe">Remember me</label>
                     </div>
                     <div class="text-center">
@@ -43,12 +49,12 @@
                   </form>
                 </div>
                 <div class="card-footer text-center pt-0 px-lg-2 px-1">
-                <small class="text-muted">Forgot you password? Reset you password 
-                  <a href="/login/forgot-password" class="text-info text-gradient font-weight-bold">here</a>
+                <small class="text-muted">Forgot your password? Reset your password
+                  <a href="{{ route('password.request') }}" class="text-info text-gradient font-weight-bold">here</a>
                 </small>
                   <p class="mb-4 text-sm mx-auto">
                     Don't have an account?
-                    <a href="register" class="text-info text-gradient font-weight-bold">Sign up</a>
+                    <a href="{{ route('register') }}" class="text-info text-gradient font-weight-bold">Sign up</a>
                   </p>
                 </div>
               </div>
