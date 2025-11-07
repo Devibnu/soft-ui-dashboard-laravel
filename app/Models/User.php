@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'permissions',
+        'photo',
         'phone',
         'location',
         'about_me',
@@ -43,6 +46,30 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'permissions' => 'array',
     ];
+
+    /**
+     * Check if user is Super Admin
+     */
+    public function isSuperAdmin()
+    {
+        return isset($this->role) && strtolower($this->role) === 'super admin';
+    }
+
+    /**
+     * Check if user has permission to a menu/module
+     */
+    public function hasPermission(string $menu)
+    {
+        // Super Admin bypass only when permissions is null (legacy full-access marker)
+        if ($this->isSuperAdmin() && is_null($this->permissions)) {
+            return true;
+        }
+        if (is_array($this->permissions)) {
+            return in_array($menu, $this->permissions);
+        }
+        return false;
+    }
     
 }

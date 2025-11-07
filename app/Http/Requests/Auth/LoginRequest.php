@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Hash;
 
 class LoginRequest extends FormRequest
 {
@@ -43,46 +41,8 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $email = (string) $this->string('email');
-        $remember = $this->boolean('remember');
-
-        // Diagnostics: trace incoming email and remember flag
-        Log::info('Auth: login attempt received', [
-            'email' => $email,
-            'remember' => $remember,
-            'ip' => $this->ip(),
-        ]);
-
-        // Diagnostics: check if user exists and if password hash matches
-        $user = \App\Models\User::where('email', $email)->first();
-        Log::info('Auth: user lookup', [
-            'found' => (bool) $user,
-            'user_id' => $user->id ?? null,
-        ]);
-
-        if ($user) {
-            $hashOk = Hash::check((string) $this->string('password'), $user->password);
-            Log::info('Auth: password hash check', [
-                'hash_ok' => $hashOk,
-                'hash_prefix' => substr($user->password, 0, 4), // typically "$2y$" for bcrypt
-            ]);
-        }
-
-        Log::info('Auth: attempting authentication with Auth facade');
-
-        $attemptResult = Auth::attempt($this->only('email', 'password'), $remember);
-
-        Log::info('Auth: authentication attempt result', [
-            'result' => $attemptResult,
-            'email' => $email,
-        ]);
-
-        if (! $attemptResult) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
-
-            Log::warning('Auth: attempt failed', [
-                'email' => $email,
-            ]);
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),

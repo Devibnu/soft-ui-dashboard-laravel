@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -17,7 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        return view('session.login-session');
+        return view('auth.login');
     }
 
     /**
@@ -25,21 +24,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        Log::info('Login attempt', ['email' => $request->email]);
-
         $request->authenticate();
-
-        Log::info('Authentication successful', ['email' => $request->email]);
 
         $request->session()->regenerate();
 
-        Log::info('Session regenerated', ['email' => $request->email]);
-
-        $redirect = redirect()->intended(route('dashboard', absolute: false));
-
-        Log::info('Redirect response', ['location' => $redirect->getTargetUrl()]);
-
-        return $redirect;
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**

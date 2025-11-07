@@ -12,6 +12,12 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        '/test-hero-submit',
+        '/adminui/about/hero',
+        '/adminui/about/content', 
+        '/adminui/about/testimonial',
+        '/adminui/request-quote/inbox/*/reply-email',  // Temporary for testing
+        '/test-email/*',  // Test route
+        '/direct-test-email/*'  // Direct test without middleware
     ];
 }

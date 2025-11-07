@@ -5,6 +5,18 @@
 
     RewriteEngine On
 
+    # Increase PHP limits for file uploads
+    php_value upload_max_filesize 2M
+    php_value post_max_size 3M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+
+    # Redirect old HTML files to Laravel routes
+    RewriteRule ^services\.html$ /services [L,R=301]
+    RewriteRule ^about\.html$ /about [L,R=301]
+
+    # Custom rule disabled - menggunakan Laravel routes
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
